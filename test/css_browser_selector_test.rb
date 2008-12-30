@@ -1,10 +1,12 @@
-$:.unshift "#{File.dirname(__FILE__)}/.."
+$:.unshift "#{File.dirname(__FILE__)}/../lib"
 require 'test/unit'
 
 require 'rubygems'
 require 'action_controller'
 require 'action_controller/test_process'
 
+require 'active_support'                            # Needed for Sym@to_proc
+require 'action_view/helpers/javascript_helper'     # Requires active_support
 require 'action_view/helpers/css_browser_selector'
 
 # browser strings found at : http://www.zytrax.com/tech/web/browser_ids.htm
@@ -16,21 +18,22 @@ end
 
 class CssBrowswerSelectorTest < Test::Unit::TestCase
   include ActionView::Helpers::CssBrowserSelector
-  include ActionView::Helpers::JavascriptHelper
-  attr_accessor :request, :controller
-
+  include ActionView::Helpers::JavaScriptHelper
+  attr_accessor :request, :controller, :output_buffer
+  
   def setup
     self.request = ActionController::TestRequest.new
     self.controller = TestController.new    
     self.controller.page_cached = false
+    self.output_buffer = ''
   end
 
   def test_html_tag_helper
     _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<html class="gecko ff2 mac" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html { _erbout.concat "<body>test</body>" } 
-    assert_dom_equal expected, _erbout    
+    html { _erbout.concat "<body>test</body>" }
+    assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper
@@ -38,7 +41,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<body class="gecko ff2 mac"><div>test</div></body>)
     body { _erbout.concat "<div>test</div>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_exclude_browser_and_os
@@ -46,7 +49,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
     html(:exclude_browser_and_os => true) { _erbout.concat "<body>test</body>" } 
-    assert_dom_equal expected, _erbout    
+    assert_dom_equal expected, output_buffer    
   end
   
   def test_body_tag_helper_exclude_browser_and_os
@@ -54,7 +57,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<body><div>test</div></body>)
     body(:exclude_browser_and_os => true)  { _erbout.concat "<div>test</div>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
@@ -62,7 +65,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="" 
     expected = %(<body><div>test</div></body>)
     body { _erbout.concat "<div>test</div>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
@@ -70,7 +73,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="" 
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
     html { _erbout.concat "<body>test</body>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_html_continues_to_pass_html_options
@@ -78,7 +81,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<html id="news" class="sports gecko ff2 mac" xml:lang="en" lang="fr" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
     html(:lang=>"fr", :id=>"news", :class=>"sports") { _erbout.concat "<body>test</body>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_body_continues_to_pass_html_options
@@ -86,7 +89,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
     expected = %(<body onclick="alert('yo')" class="message gecko ff2 mac"><div>test</div></body>)
     body(:onclick=>"alert('yo')", :class => "message") { _erbout.concat "<div>test</div>" } 
-    assert_dom_equal expected, _erbout
+    assert_dom_equal expected, output_buffer
   end
 
   def test_window_add_load_event_script
