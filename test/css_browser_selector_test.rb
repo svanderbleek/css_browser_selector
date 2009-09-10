@@ -1,13 +1,14 @@
 $:.unshift "#{File.dirname(__FILE__)}/../lib"
-require 'test/unit'
-
-require 'rubygems'
-require 'action_controller'
-require 'action_controller/test_process'
-
-require 'active_support'                            # Needed for Sym@to_proc
-require 'action_view/helpers/javascript_helper'     # Requires active_support
-require 'action_view/helpers/css_browser_selector'
+%w(
+   rubygems
+   test/unit
+   test/unit/assertions
+   active_support
+   action_view/helpers/javascript_helper
+   action_view/helpers/css_browser_selector
+   action_controller
+   action_controller/test_case
+  ).each {|f| require f}
 
 # browser strings found at : http://www.zytrax.com/tech/web/browser_ids.htm
 
@@ -19,6 +20,7 @@ end
 class CssBrowswerSelectorTest < Test::Unit::TestCase
   include ActionView::Helpers::CssBrowserSelector
   include ActionView::Helpers::JavaScriptHelper
+  include ActionController::TestCase::Assertions
   attr_accessor :request, :controller, :output_buffer
 
   def setup
