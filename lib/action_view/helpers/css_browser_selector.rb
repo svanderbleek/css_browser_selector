@@ -105,6 +105,7 @@ module ActionView
         br = (!(/opera|webtv/i=~ua)&&/msie (\d)/=~ua) ?
              'ie ie'+Regexp.last_match(1) :                  # ie
              ua.include?('firefox/2') ? 'gecko ff2' :        # ff2 explicitly
+             ua.include?('firefox/3.5') ? 'gecko ff3-5' :    # ff3-5 explicitly
              ua.include?('firefox/3') ? 'gecko ff3' :        # ff3 explicitly
              ua.include?('gecko/') ? 'gecko' :               # ns
              ua.include?('opera/9') ? 'opera opera9' :       # opera 9 only

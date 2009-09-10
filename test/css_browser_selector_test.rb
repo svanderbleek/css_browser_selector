@@ -146,12 +146,45 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9a7) Gecko/2007080210 GranParadiso/3.0a7"     => "gecko win",       # firefox dev
       "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9b2pre) Gecko/2007120505 Minefield/3.0b2pre"  => "gecko win",       # firefox dev
       "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-GB; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11"      => "gecko ff2 win",   # firefox 2 vista
-      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.13) Gecko/20060410 Firefox/1.0.8"           => "gecko win",   # firefox 1 xp
-      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.3) Gecko/20041002 Firefox/0.10.1"           => "gecko win",   # firefox pre v1
-      "Mozilla/5.0 (X11; U; SunOS sun4m; en-US; rv:1.4b) Gecko/20030517 Mozilla Firebird/0.6"             => "gecko linux", # firefox firebird
-      "Mozilla/5.0 (Windows; U; WinNT4.0; en-US; rv:1.3a) Gecko/20021207 Phoenix/0.5"                     => "gecko win",   # firefox phoenix
-      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.2b) Gecko/20020923 Phoenix/0.1"               => "gecko win",   # firefox phoenix xp
-      "Mozilla/3.0 (x86 [en] Windows NT 5.1; Sun)"                                                        => "gecko win"    # hotjava
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.13) Gecko/20060410 Firefox/1.0.8"           => "gecko win",       # firefox 1 xp
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.3) Gecko/20041002 Firefox/0.10.1"           => "gecko win",       # firefox pre v1
+      "Mozilla/5.0 (X11; U; SunOS sun4m; en-US; rv:1.4b) Gecko/20030517 Mozilla Firebird/0.6"             => "gecko linux",     # firefox firebird
+      "Mozilla/5.0 (Windows; U; WinNT4.0; en-US; rv:1.3a) Gecko/20021207 Phoenix/0.5"                     => "gecko win",       # firefox phoenix
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.2b) Gecko/20020923 Phoenix/0.1"               => "gecko win",       # firefox phoenix xp
+      "Mozilla/3.0 (x86 [en] Windows NT 5.1; Sun)"                                                        => "gecko win"        # hotjava
+    })
+  end
+
+  def test_firefox3_browser_strings
+    assert_browser_strings({
+      "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.1.6"                   => "gecko ff3 mac",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.9.0.2) Gecko/2008092313 Firefox/3.1.6"                        => "gecko ff3 win",
+      "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1b3) Gecko/20090327 GNU/Linux/x86_64 Firefox/3.1"                 => "gecko ff3 linux",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.6pre) Gecko/2009011606 Firefox/3.1"                       => "gecko ff3 win",
+      "Mozilla/6.0 (Windows; U; Windows NT 7.0; en-US; rv:1.9.0.8) Gecko/2009032609 Firefox/3.0.9 (.NET CLR 3.5.30729)"   => "gecko ff3 win",
+      "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.9) Gecko/2009040820 Firefox/3.0.9"                                => "gecko ff3 linux"
+    })
+  end
+
+  def test_firefox3_5_browser_strings
+    assert_browser_strings({
+      "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5"                   => "gecko ff3-5 mac",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1) Gecko/20090612 Firefox/3.5 (.NET CLR 4.0.20506)"       => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1) Gecko/20090612 Firefox/3.5"                            => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1) Gecko/20090624 Firefox/3.5 GTB5 (.NET CLR 3.0.30729)"  => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1) Gecko/20090615 Firefox/3.5"                            => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en; rv:1.9.1.1) Gecko/20090715 Firefox/3.5"                             => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.9.1) Gecko/20090624 Firefox/3.5 GTB5"                       => "gecko ff3-5 win",
+      "Mozilla/5.0 (Windows; ; Windows NT 5.1; en; rv:1.9.1.1) Gecko/20090715 Firefox/3.5"                              => "gecko ff3-5 win",
+      "Mozilla/5.0 (Linux; U;Linux X86_64; en-US; rv:1.9.1) Gecko/20090624 Firefox/3.5"                                 => "gecko ff3-5 linux",
+      "Mozilla/5.0 (X11; U; Linux i686; en-us; rv:1.9.0.2) Gecko/2008092313 Ubuntu/9.04 (jaunty) Firefox/3.5"           => "gecko ff3-5 linux",
+      "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.1"                 => "gecko ff3-5 mac",
+      "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.1.1) Gecko/20090716 Firefox/3.5.1"                              => "gecko ff3-5 linux",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.1) Gecko/20090718 Firefox/3.5.1"                        => "gecko ff3-5 win",
+      "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2"                 => "gecko ff3-5 mac",
+      "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.0.12) Gecko/2009070611 Firefox/3.5.2"                     => "gecko ff3-5 win",
+      "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2"                                => "gecko ff3-5 linux",
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5"                   => "gecko ff3-5 win",
     })
   end
 
