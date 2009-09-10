@@ -6,15 +6,15 @@ module ActionController #:nodoc:
       base.class_eval { include TrackPages }
     end
 
-    # Methods to track pages that are cached.  Adds the class variable +page_cached_actions+ to each 
+    # Methods to track pages that are cached.  Adds the class variable +page_cached_actions+ to each
     # controller that includes +CachingTracker+.  Inserts the tracking mechanism on the caches_page
-    # method.    
+    # method.
     module TrackPages
       def self.included(base) #:nodoc:
         base.extend(ClassMethods)
         base.class_eval do
           include InstanceMethods
-          
+
           @@page_cached_actions = []
           cattr_accessor :page_cached_actions
           class << self
@@ -22,7 +22,7 @@ module ActionController #:nodoc:
           end
         end
       end
-      
+
       module ClassMethods
         # Saves the collection of actions that are passed to +caches_page+ if +perform_caching+ is true.
         def caches_page_with_tracking(*actions)
@@ -32,7 +32,7 @@ module ActionController #:nodoc:
       end
 
       module InstanceMethods
-        # Helper to determine if the controller action is currently being page cached (ie. passed to 
+        # Helper to determine if the controller action is currently being page cached (ie. passed to
         # the +caches_page+ method).  This is based on the controller instance's +action_name+ but
         # you can optionally pass the string name of the action:
         #   controller.page_cached?("new")

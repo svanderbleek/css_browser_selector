@@ -20,75 +20,75 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   include ActionView::Helpers::CssBrowserSelector
   include ActionView::Helpers::JavaScriptHelper
   attr_accessor :request, :controller, :output_buffer
-  
+
   def setup
     self.request = ActionController::TestRequest.new
-    self.controller = TestController.new    
+    self.controller = TestController.new
     self.controller.page_cached = false
     self.output_buffer = ''
   end
 
   def test_html_tag_helper
     _erbout = ''
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html class="gecko ff2 mac" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
     html { _erbout.concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body class="gecko ff2 mac"><div>test</div></body>)
-    body { _erbout.concat "<div>test</div>" } 
+    body { _erbout.concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_exclude_browser_and_os
     _erbout = ''
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html(:exclude_browser_and_os => true) { _erbout.concat "<body>test</body>" } 
-    assert_dom_equal expected, output_buffer    
+    html(:exclude_browser_and_os => true) { _erbout.concat "<body>test</body>" }
+    assert_dom_equal expected, output_buffer
   end
-  
+
   def test_body_tag_helper_exclude_browser_and_os
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body><div>test</div></body>)
-    body(:exclude_browser_and_os => true)  { _erbout.concat "<div>test</div>" } 
+    body(:exclude_browser_and_os => true)  { _erbout.concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]=""
     expected = %(<body><div>test</div></body>)
-    body { _erbout.concat "<div>test</div>" } 
+    body { _erbout.concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]=""
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html { _erbout.concat "<body>test</body>" } 
+    html { _erbout.concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_continues_to_pass_html_options
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html id="news" class="sports gecko ff2 mac" xml:lang="en" lang="fr" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html(:lang=>"fr", :id=>"news", :class=>"sports") { _erbout.concat "<body>test</body>" } 
+    html(:lang=>"fr", :id=>"news", :class=>"sports") { _erbout.concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_continues_to_pass_html_options
-    _erbout = ''    
-    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+    _erbout = ''
+    request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body onclick="alert('yo')" class="message gecko ff2 mac"><div>test</div></body>)
-    body(:onclick=>"alert('yo')", :class => "message") { _erbout.concat "<div>test</div>" } 
+    body(:onclick=>"alert('yo')", :class => "message") { _erbout.concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
@@ -103,20 +103,20 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
                %(window.addLoadEvent(function(){e=document.getElementsByTagName('body')[0];e.className+=e.className?' js':'js'})\n//]]>\n</script>)
     assert_equal expected, javascript_tag(window_on_load_add_js_to_tag(:body))
   end
-  
+
   # def test_html_content_tag_with_browser_selectors
-  #   request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
-  #   expected = %(<html class="gecko mac"><body>Hello world!</body></html>)    
+  #   request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
+  #   expected = %(<html class="gecko mac"><body>Hello world!</body></html>)
   #   assert_dom_equal expected, content_tag(:html, "<body>Hello world!</body>")
-  # 
+  #
   #   expected = %(<body class="strong gecko mac"><p>Hello world!</p></body></html>)
   #   assert_dom_equal expected, content_tag(:body, content_tag(:p, "Hello world!"), :class => "strong")
   # end
-  # 
-  #   
+  #
+  #
   # def test_html_content_tag_with_block_and_browser_selectors
-  #   _erbout = ''    
-  #   request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6" 
+  #   _erbout = ''
+  #   request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
   #   expected = %(<body class="strong gecko mac"><p>Hello world!</p></body></html>)
   #   content_tag(:body, :class => "strong") do
   #      "Hello World!"
@@ -127,9 +127,9 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   def test_no_browser_strings
     assert_browser_strings({"" => ""})
   end
-  
+
   def test_camino_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en; rv:1.8.1.6) Gecko/20070809 Camino/1.5.1"      => "gecko mac", # camino
       "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.0.1) Gecko/20060118 Camino/1.0b2+"  => "gecko mac", # camino nightly
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.5b) Gecko/20030917 Camino/0.7+"  => "gecko mac", # camino
@@ -138,7 +138,7 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   end
 
   def test_firefox_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"      => "gecko ff2 mac",
       "Mozilla/5.0 (X11; U; Darwin Power Macintosh; en-US; rv:1.8.0.12) Gecko/20070803 Firefox/1.5.0.12 Fink Community Edition" => "gecko mac", # firefox 1.5 darwin
       "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9a7) Gecko/2007080210 GranParadiso/3.0a7"     => "gecko win",       # firefox dev
@@ -147,17 +147,17 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.13) Gecko/20060410 Firefox/1.0.8"           => "gecko win",   # firefox 1 xp
       "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.3) Gecko/20041002 Firefox/0.10.1"           => "gecko win",   # firefox pre v1
       "Mozilla/5.0 (X11; U; SunOS sun4m; en-US; rv:1.4b) Gecko/20030517 Mozilla Firebird/0.6"             => "gecko linux", # firefox firebird
-      "Mozilla/5.0 (Windows; U; WinNT4.0; en-US; rv:1.3a) Gecko/20021207 Phoenix/0.5"                     => "gecko win",   # firefox phoenix 
+      "Mozilla/5.0 (Windows; U; WinNT4.0; en-US; rv:1.3a) Gecko/20021207 Phoenix/0.5"                     => "gecko win",   # firefox phoenix
       "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.2b) Gecko/20020923 Phoenix/0.1"               => "gecko win",   # firefox phoenix xp
       "Mozilla/3.0 (x86 [en] Windows NT 5.1; Sun)"                                                        => "gecko win"    # hotjava
     })
   end
 
   def test_navigator_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.8pre) Gecko/20071019 Firefox/2.0.0.8 Navigator/9.0.0.1" => "gecko ff2 win",   # Navigator 9 with Firefox fixes
       "Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20050519 Netscape/8.0.1"                         => "gecko win",   # A real Firefox based Netscape 8 with a security patch (already) on Win 2K
-      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.2) Gecko/20040804 Netscape/7.2 (ax)"                      => "gecko win",   # Netscape 7.2 and still we're wondering what's the (ax)? 
+      "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.2) Gecko/20040804 Netscape/7.2 (ax)"                      => "gecko win",   # Netscape 7.2 and still we're wondering what's the (ax)?
       "Mozilla/5.0 (Windows; U; WinNT4.0; en-CA; rv:0.9.4) Gecko/20011128 Netscape6/6.2.1"                              => "gecko win",   # NS 6.2.1 on NT4.0.
       "Mozilla/4.8 [en] (X11; U; Linux 2.4.20-8 i686)"                                                                  => "gecko linux", # NS 4.8 on Redhat 9
       "Mozilla/3.01 (WinNT; I) [AXP]"                                                                                   => "gecko win",   # NS 3.01 on DEC ALPHA under NT
@@ -166,9 +166,9 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/0.6 Beta (Windows)"                                                                                      => "gecko win"    # The new dinosaur string. Netscape 0.6 on WfWG 3.11.
     })
   end
-        
+
   def test_konqueror_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/5.0 (compatible; Konqueror/4.0; Microsoft Windows) KHTML/4.0.80 (like Gecko)"                                     => "konqueror win",   # konqueror win
       "Mozilla/5.0 (compatible; Konqueror/3.92; Microsoft Windows) KHTML/3.92.0 (like Gecko)"                                    => "konqueror win",   # konqueror win
       "Mozilla/5.0 (compatible; Konqueror/3.5; Darwin) KHTML/3.5.6 (like Gecko)"                                                 => "konqueror mac",   # konqueror mac
@@ -192,9 +192,9 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/5.0 (compatible; Konqueror/2.1.1; X11)"                                                                           => "konqueror linux"  # Konqueror 2.1.1 (KDE) on Linux Mandrake 8.0 under X windows
     })
   end
-    
+
   def test_opera_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Opera/9.20 (Macintosh; Intel Mac OS X; U; en)"                                             => "opera opera9 mac",    # Opera 9.20 on MAC with OS X
       "Opera/9.02 (Windows NT 5.0; U; en)"                                                        => "opera opera9 win",    # Opera 9.02 on Win 2K
       "Opera/9.00 (Windows NT 4.0; U; en)"                                                        => "opera opera9 win",    # Opera 9.0 on Windows NT 4.0
@@ -222,10 +222,10 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Opera/7.50 (X11; Linux i686; U) [en]"                                                      => "opera opera7 linux",  # Opera 7.50 running on Mandrake Linux
       "Mozilla/5.0 (X11; Linux i686; U) Opera 7.50 [en]"                                          => "opera opera7 linux",  # Opera 7.50 running on Mandrake Linux
       "Mozilla/4.0 (compatible; MSIE 6.0; X11; Linux i686) Opera 7.20 [en]"                       => "opera opera7 linux",  # Opera 7.20 running on Linux and pretending to be MSIE 6.0
-      "Opera/7.11 (Windows NT 5.1; U) [en]"                                                       => "opera opera7 win",    # On Windows XP. 
+      "Opera/7.11 (Windows NT 5.1; U) [en]"                                                       => "opera opera7 win",    # On Windows XP.
       "Mozilla/4.0 (compatible; MSIE 6.0; Windows ME) Opera 7.11 [en]"                            => "opera opera7 win",    # Opera 7.11 running on WME
       "Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 5.0) Opera 7.02 Bork-edition [en]" => "opera opera7 win",    # The infamous MSN version of Opera 7.02 on W2K
-      "Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 4.0) Opera 7.0 [en]"               => "opera opera7 win",    # Opera 7.0 on NT 4.0. 
+      "Mozilla/4.0 (compatible; MSIE 6.0; MSIE 5.5; Windows NT 4.0) Opera 7.0 [en]"               => "opera opera7 win",    # Opera 7.0 on NT 4.0.
       "Mozilla/4.0 (compatible; MSIE 5.0; Windows 2000) Opera 6.0 [en]"                           => "opera opera6 win",    # Opera 6.0 on Windows 2000.
       "Mozilla/4.0 (compatible; MSIE 5.0; Windows 95) Opera 6.01 [en]"                            => "opera opera6 win",    # Opera 6.01 on Windows 95.
       "Mozilla/4.0 (compatible; MSIE 5.0; Mac_PowerPC) Opera 5.0 [en]"                            => "opera opera5 mac"     # Opera 5.0 on the Mac (OS8.6)
@@ -233,10 +233,10 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   end
 
   def test_msie_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; Media Center PC 5.0; .NET CLR 1.1.4322; Windows-Media-Player/10.00.00.3990; InfoPath.2" => "ie ie7 win", # MSIE 7 running on Windows Vista 64-bit with a ton of 'stuff'
       "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; InfoPath.1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; Dealio Deskball 3.0)" => "ie ie7 win", # MSIE 7 on XP and every version of .NET known to mankind
-      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; NeosBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)" => "ie ie6 win",  # Explanation: MSIE 6.x on XP with a skin from neos.tv who seem to specialize in the hospitality (read hotel) industry. 
+      "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; NeosBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)" => "ie ie6 win",  # Explanation: MSIE 6.x on XP with a skin from neos.tv who seem to specialize in the hospitality (read hotel) industry.
       "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)"                                                              => "ie ie5 win",  # MSIE 5.5 on Windows 98
       "Mozilla/4.0 (compatible; MSIE 5.22; Mac_PowerPC)"                                                            => "ie ie5 mac",  # Latest MAC OS X version of MSIE
       "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)"                                                      => "ie ie5 win",  # MSIE 5.0 on MS NT 4.0
@@ -245,9 +245,9 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/1.22 (compatible; MSIE 2.0; Windows 95)"                                                             => "ie ie2 win"   # MSIE 2.0 in windows '95
     })
   end
-    
+
   def test_safari_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-gb) AppleWebKit/523.10.6 (KHTML, like Gecko) Version/3.0.4 Safari/523.10.6"  => "webkit safari safari3 mac", # Safari 3.0.4 on Mac OS 10.5.1 Intel
       "Mozilla/5.0 (iPod; U; CPU like Mac OS X; en) AppleWebKit/420.1 (KHTML, like Gecko) Version/3.0 Mobile/3A100a Safari/419.3" => "webkit safari safari3 ipod mac", # Safari 3.0 for the iPod touch
       "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1C28 Safari/419.3"  => "webkit safari safari3 iphone mac", # Safari 3.0 for the iPhone
@@ -261,22 +261,22 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412"                               => "webkit safari safari2 mac", # Safari browser 2.0 for MAC OS X (10.4.1 build 8B15)
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; fr-fr) AppleWebKit/312.5.1 (KHTML, like Gecko) Safari/312.3.1"                    => "webkit safari safari1 mac", # Safari 1.3.1 on 1.3.9 after after Security update 2005-008
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; fr-fr) AppleWebKit/312.5 (KHTML, like Gecko) Safari/312.3"                        => "webkit safari safari1 mac", # Safari 1.3.1 (v312.3) 10.3.9 = last update on last version of Panther
-      "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/124 (KHTML, like Gecko) Safari/125.1"                             => "webkit safari safari1 mac", # Safari browser 1.25.1 for MAC OS 
+      "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/124 (KHTML, like Gecko) Safari/125.1"                             => "webkit safari safari1 mac", # Safari browser 1.25.1 for MAC OS
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/106.2 (KHTML, like Gecko) Safari/100.1"                           => "webkit safari safari1 mac", # Safari browser 1.0 for MAC OS X
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; es) AppleWebKit/85 (KHTML, like Gecko) Safari/85"                                 => "webkit safari safari1 mac", # Safari browser 1.0 for MAC OS X with spanish language variant
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/74 (KHTML, like Gecko) Safari/74"                              => "webkit safari safari1 mac", # Safari browser build 74 for MAC OS X
       "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/51 (like Gecko) Safari/51"                                        => "webkit safari safari1 mac", # Safari browser for MAC OS X
     })
   end
-  
+
   def test_webtv_browser_strings
-    assert_browser_strings({ 
+    assert_browser_strings({
       "Mozilla/4.0 WebTV/2.8 (compatible; MSIE 4.0)" => "gecko" # WebTV 2.8
     })
   end
 
   private
-  def assert_browser_strings(user_agent_strings) 
-    user_agent_strings.each { |s,bros| assert_equal bros, determine_browser_and_os(s), "#{s} determined to be '#{bros}'" }    
+  def assert_browser_strings(user_agent_strings)
+    user_agent_strings.each { |s,bros| assert_equal bros, determine_browser_and_os(s), "#{s} determined to be '#{bros}'" }
   end
 end
