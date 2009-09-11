@@ -114,17 +114,13 @@ module ActionView
           when %r{firefox/3.5} :      "gecko ff3 ff3_5"
           when %r{firefox/3} :        "gecko ff3"
           when /applewebkit\/([\d.]+).? \([^)]*\) ?(?:version\/(\d+))?.*$/
-            build   = $1
-            version = $2
             o = %W(webkit)
             if ua.include?('iron')
               o << 'iron'
             elsif ua.include?('chrome')
               o << 'chrome'
             else
-              puts "build :#{build}"
-              puts "version :#{version}"
-              o << "safari safari"+ (version || ((build.to_i >= 400) ? '2' : '1'))
+              o << "safari safari"+ ($2 || (($1.to_i >= 400) ? '2' : '1'))
             end
             o.join(" ")
           when /konqueror/ :          "konqueror"
