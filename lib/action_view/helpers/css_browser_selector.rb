@@ -100,26 +100,37 @@ module ActionView
       end
 
       # The ruby version of the CSS Browser Selector with some additions
+      # TODO: This should be moved to a parser.
       def determine_browser_and_os(ua = request.env["HTTP_USER_AGENT"])
         ua = (ua||"").downcase
-        br = (!(/opera|webtv/i=~ua)&&/msie (\d)/=~ua) ?
-             'ie ie'+Regexp.last_match(1) :                  # ie
-             ua.include?('firefox/2') ? 'gecko ff2' :        # ff2 explicitly
-             ua.include?('firefox/3.5') ? 'gecko ff3-5' :    # ff3-5 explicitly
-             ua.include?('firefox/3') ? 'gecko ff3' :        # ff3 explicitly
-             ua.include?('gecko/') ? 'gecko' :               # ns
-             ua.include?('opera/9') ? 'opera opera9' :       # opera 9 only
-             /opera (\d)/=~ua || /opera\/(\d)/=~ua ?
-             'opera opera'+Regexp.last_match(1) :            # opera
-             ua.include?('konqueror') ? 'konqueror' :        # konqueror
-             /applewebkit\/(\d+)/=~ua ?
-             (build = Regexp.last_match(1).to_i) &&
-             'webkit safari safari' +                        # safari
-                (/version\/(\d+)/=~ua ?
-                Regexp.last_match(1) :
-                (build >= 400) ? '2' : '1') :                 # safari version
-             ua.include?('mozilla/') ? 'gecko' : nil          # ff
-        os = ua.include?('mac') || ua.include?('darwin') ? ua.include?('iphone') ? 'iphone mac' : ua.include?('ipod') ? 'ipod mac' : 'mac' :
+        br = case ua
+          when /opera[\/,\s+](\d+)/
+            o = %W(opera opera#{$1})
+            o << "mobile" if ua.include?('mini')
+            o.join(" ")
+          when /webtv/ :              "gecko"
+          when /msie (\d)/ :          "ie ie#{$1}"
+          when %r{firefox/2} :        "gecko ff2"
+          when %r{firefox/3.5} :      "gecko ff3 ff3_5"
+          when %r{firefox/3} :        "gecko ff3"
+          when /applewebkit\/([\d.]+).? \([^)]*\) ?(?:version\/(\d+))?.*$/
+            build   = $1
+            version = $2
+            o = %W(webkit)
+            if ua.include?('iron')
+              o << 'iron'
+            elsif ua.include?('chrome')
+              o << 'chrome'
+            else
+              puts "build :#{build}"
+              puts "version :#{version}"
+              o << "safari safari"+ (version || ((build.to_i >= 400) ? '2' : '1'))
+            end
+            o.join(" ")
+          when /konqueror/ :          "konqueror"
+          when /gecko/, /mozilla/ :   "gecko"
+        end
+        os = ua.include?('mac') || ua.include?('darwin') ? ua.include?('iphone') ? 'iphone' : ua.include?('ipod') ? 'ipod' : 'mac' :
              ua.include?('x11') || ua.include?('linux') ? 'linux' :
              ua.include?('win') ? 'win' : nil
         "#{br}#{" " unless br.nil? or os.nil?}#{os}"
