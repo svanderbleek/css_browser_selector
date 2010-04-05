@@ -92,10 +92,17 @@ module ActionView
         unless exclude_browser_and_os or (bros = determine_browser_and_os).empty? or controller.page_cached?
           html_options[:class] = html_options[:class] ? "#{html_options[:class]} #{bros}" : bros
         end
-        content = content_tag tag,
-                  (controller.page_cached? ? "\n" + javascript_tag(css_browser_selector(tag, false)) : "") +
-                  (capture(&block) if block_given?),
-                  html_options
+
+        open_tag, close_tag = content_tag(tag, "<>", html_options).split('<>')
+
+        concat_compat open_tag
+        concat_compat "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
+        block.call if block_given?
+        concat_compat close_tag
+      end
+
+      # Backwards compatible concat call
+      def concat_compat(content)
         method(:concat).arity == 2 ? concat(content, block.binding) : concat(content)
       end
 

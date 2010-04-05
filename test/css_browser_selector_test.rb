@@ -31,66 +31,58 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   end
 
   def test_html_tag_helper
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html class="gecko ff2 mac" xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html { _erbout.concat "<body>test</body>" }
+    html { concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body class="gecko ff2 mac"><div>test</div></body>)
-    body { _erbout.concat "<div>test</div>" }
+    body { concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_exclude_browser_and_os
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html(:exclude_browser_and_os => true) { _erbout.concat "<body>test</body>" }
+    html(:exclude_browser_and_os => true) { concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper_exclude_browser_and_os
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body><div>test</div></body>)
-    body(:exclude_browser_and_os => true)  { _erbout.concat "<div>test</div>" }
+    body(:exclude_browser_and_os => true)  { concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]=""
     expected = %(<body><div>test</div></body>)
-    body { _erbout.concat "<div>test</div>" }
+    body { concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_tag_helper_does_not_add_js_to_body_onload_when_no_browser_or_os_detected
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]=""
     expected = %(<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html { _erbout.concat "<body>test</body>" }
+    html { concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_html_continues_to_pass_html_options
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<html id="news" class="sports gecko ff2 mac" xml:lang="en" lang="fr" xmlns="http://www.w3.org/1999/xhtml"><body>test</body></html>)
-    html(:lang=>"fr", :id=>"news", :class=>"sports") { _erbout.concat "<body>test</body>" }
+    html(:lang=>"fr", :id=>"news", :class=>"sports") { concat "<body>test</body>" }
     assert_dom_equal expected, output_buffer
   end
 
   def test_body_continues_to_pass_html_options
-    _erbout = ''
     request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
     expected = %(<body onclick="alert('yo')" class="message gecko ff2 mac"><div>test</div></body>)
-    body(:onclick=>"alert('yo')", :class => "message") { _erbout.concat "<div>test</div>" }
+    body(:onclick=>"alert('yo')", :class => "message") { concat "<div>test</div>" }
     assert_dom_equal expected, output_buffer
   end
 
@@ -117,13 +109,12 @@ class CssBrowswerSelectorTest < Test::Unit::TestCase
   #
   #
   # def test_html_content_tag_with_block_and_browser_selectors
-  #   _erbout = ''
   #   request.env["HTTP_USER_AGENT"]="Mozilla/5.0 (Macintosh; U; Intel Mac OS X; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
   #   expected = %(<body class="strong gecko mac"><p>Hello world!</p></body></html>)
   #   content_tag(:body, :class => "strong") do
   #      "Hello World!"
   #   end
-  #   assert_dom_equal(expected, _erbout)
+  #   assert_dom_equal(expected, 
   # end
 
   ### TODO: Automatically grab tests from rafaelp/css_browser_selector
