@@ -1,9 +1,15 @@
 $:.unshift "#{File.dirname(__FILE__)}/../lib"
 %w(
    rubygems
+   erb
    test/unit
    test/unit/assertions
    active_support
+   action_view
+   action_view/base
+   action_view/template/handlers/erb
+   action_view/helpers/capture_helper
+   action_view/helpers/prototype_helper
    action_view/helpers/javascript_helper
    action_view/helpers/css_browser_selector
    action_controller
@@ -20,7 +26,9 @@ end
 class CssBrowswerSelectorTest < Test::Unit::TestCase
   include ActionView::Helpers::CssBrowserSelector
   include ActionView::Helpers::JavaScriptHelper
-  include ActionController::TestCase::Assertions
+  include ActionDispatch::Assertions::DomAssertions
+  
+
   attr_accessor :request, :controller, :output_buffer
 
   def setup

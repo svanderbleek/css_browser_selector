@@ -58,7 +58,7 @@ module ActionView
 
       # Creates the body content element with css_browser_selectors added to its class attribute.
       def body(html_options = {}, &block)
-        add_css_browser_selectors_to_tag(:body, html_options, &block)
+        add_css_browser_selectors_to_tag(:body, html_options, &block).html_safe
       end
 
       # # arguments: name, content options, escape = true
@@ -93,12 +93,13 @@ module ActionView
           html_options[:class] = html_options[:class] ? "#{html_options[:class]} #{bros}" : bros
         end
 
-        open_tag, close_tag = content_tag(tag, "<>", html_options).split('<>')
-
-        concat_compat open_tag
-        concat_compat "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
-        block.call if block_given?
-        concat_compat close_tag
+        open_tag, close_tag = content_tag(tag, "<>", html_options).split("&lt;&gt;")
+        
+        content = String.new
+        content << open_tag
+        content << "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
+        content << capture(&block) if block_given?
+        content << close_tag
       end
 
       # Backwards compatible concat call
