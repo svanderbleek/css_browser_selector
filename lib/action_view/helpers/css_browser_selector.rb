@@ -100,11 +100,8 @@ module ActionView
         content << "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
         content << capture(&block) if block_given?
         content << close_tag
-      end
-
-      # Backwards compatible concat call
-      def concat_compat(content)
-        method(:concat).arity == 2 ? concat(content, block.binding) : concat(content)
+        self.output_buffer = content
+        output_buffer
       end
 
       # The ruby version of the CSS Browser Selector with some additions
