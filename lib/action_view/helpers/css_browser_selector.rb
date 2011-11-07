@@ -92,15 +92,12 @@ module ActionView
         unless exclude_browser_and_os or (bros = determine_browser_and_os).empty? or controller.page_cached?
           html_options[:class] = html_options[:class] ? "#{html_options[:class]} #{bros}" : bros
         end
-
-        open_tag, close_tag = content_tag(tag, "<>", html_options).split("&lt;&gt;")
         
-        content = String.new
-        content << open_tag
-        content << "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
-        content << capture(&block) if block_given?
-        content << close_tag
-        self.output_buffer = content
+        content = ActiveSupport::SafeBuffer.new 
+        content.safe_concat "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
+        content.safe_concat yield 
+
+        self.output_buffer = content_tag(tag, content, html_options)
         output_buffer
       end
 
