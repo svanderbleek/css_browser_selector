@@ -58,23 +58,8 @@ module ActionView
 
       # Creates the body content element with css_browser_selectors added to its class attribute.
       def body(html_options = {}, &block)
-        add_css_browser_selectors_to_tag(:body, html_options, &block).html_safe
+        add_css_browser_selectors_to_tag(:body, html_options, &block)
       end
-
-      # # arguments: name, content options, escape = true
-      # # will dry up once I get working
-      # def content_tag_string_with_css_browser_selector(*args)
-      #   if args[0] == :html or args[0] == :body
-      #     html_options = args[2]||{}
-      #     exclude_browser_and_os = html_options.delete(:exclude_browser_and_os)
-      #     unless exclude_browser_and_os or (bros = determine_browser_and_os).empty?
-      #       html_options[:class] = html_options[:class] ? "#{html_options[:class]} #{bros}" : bros
-      #     end
-      #     args[2] = html_options if html_options
-      #   end
-      #   content_tag_string_without_css_browser_selector(*args)
-      # end
-      # alias_method_chain :content_tag_string, :css_browser_selector
 
       private
       # Inline javascript to add the 'js' class to the supplied tag.  Adds the 'js' css_browser_selector
@@ -94,11 +79,10 @@ module ActionView
         end
         
         content = ActiveSupport::SafeBuffer.new 
-        content.safe_concat "\n#{javascript_tag(css_browser_selector(tag, false))}" if controller.page_cached?
-        content.safe_concat yield 
+        content.safe_concat javascript_tag(css_browser_selector(tag, false)) if controller.page_cached?
+        content << capture(&block) if block_given?
 
-        self.output_buffer = content_tag(tag, content, html_options)
-        output_buffer
+        content_tag(tag, content, html_options)
       end
 
       # The ruby version of the CSS Browser Selector with some additions
